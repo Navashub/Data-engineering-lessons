@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Database service
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: todouser
+      POSTGRES_PASSWORD: todopass
+      POSTGRES_DB: tododb
+    volumes:
+      - todo-db-data:/var/lib/postgresql/data
+    networks:
+      - todo-network
+
+  # Backend API service
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: todouser
+      DB_PASSWORD: todopass
+      DB_NAME: tododb
+    depends_on:
+      - db
+    networks:
+      - todo-network
+
+volumes:
+  todo-db-data:
+
+networks:
+  todo-network:
