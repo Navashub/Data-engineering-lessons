@@ -1,0 +1,34 @@
+services:
+  # Nginx Reverse Proxy
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend1
+      - backend2
+      - frontend
+    networks:
+      - proxy-network
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    networks:
+      - proxy-network
+
+  # Backend Service 1 (API v1)
+  backend1:
+    build: ./backend1
+    networks:
+      - proxy-network
+
+  # Backend Service 2 (API v2)
+  backend2:
+    build: ./backend2
+    networks:
+      - proxy-network
+
+networks:
+  proxy-network:
+    driver: bridge

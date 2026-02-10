@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nginx Reverse Proxy Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 800px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+    
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    #result {
+      background: #f7f7f7;
+      border-radius: 10px;
+      padding: 20px;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    
+    .loading {
+      color: #667eea;
+      font-style: italic;
+    }
+    
+    .error {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    
+    .success {
+      color: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Nginx Reverse Proxy</h1>
+    <p class="subtitle">All requests go through Nginx on port 80</p>
+    
+    <div class="buttons">
+      <button onclick="fetchData('/api/v1/users')">Get Users (v1)</button>
+      <button onclick="fetchData('/api/v2/users')">Get Users (v2)</button>
+      <button onclick="fetchData('/api/v1/status')">Status v1</button>
+      <button onclick="fetchData('/api/v2/status')">Status v2</button>
+    </div>
+    
+    <div id="result">
+      <p class="loading">Click a button to make a request...</p>
+    </div>
+  </div>
+
+  <script>
+    async function fetchData(endpoint) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '<p class="loading">Loading...</p>';
+      
+      try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+        
+        resultDiv.innerHTML = `
+          <p class="success">✅ Success! Response from: <strong>${endpoint}</strong></p>
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        `;
+      } catch (error) {
+        resultDiv.innerHTML = `
+          <p class="error">❌ Error: ${error.message}</p>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
