@@ -1,0 +1,64 @@
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservices-network
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    networks:
+      - microservices-network
+    environment:
+      - NODE_ENV=development
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo
+    networks:
+      - microservices-network
+    environment:
+      - NODE_ENV=development
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3003:3003"
+    depends_on:
+      - mongo
+      - user-service
+      - product-service
+    networks:
+      - microservices-network
+    environment:
+      - NODE_ENV=development
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    networks:
+      - microservices-network
+    environment:
+      - NODE_ENV=development
+
+volumes:
+  mongo-data:
+
+networks:
+  microservices-network:
+    driver: bridge
